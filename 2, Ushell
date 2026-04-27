@@ -1,0 +1,35 @@
+Ushell is a Wayland shell, based on QuickShell ("https://quickshell.org/")
+
+there is an application launcher which can be toggled by pressing "super" (mod+mod) or "alt+tab"
+applications will be opened in their own workspace,	that will also contain any extra windows opened by that application
+to close the focused window, press "super+backspace" or "alt+escape"
+
+entering "space" as the first character in application launcher, opens terminal emulator
+the entered command will be run in a new terminal view, inside a list at the right column
+when terminal view finishes its job, if there is any output, it'll be transfered to the history list under the prompt
+to navigate between terminal views, use "ctrl+pageup" and "ctrl+pagedown" keys
+to go back to the prompt, press "ctrl+tab"
+to navigate in history list, use "up" and "down" arrow keys
+	you can press enter on an entry to rerun the command, or press space to first edit it
+to close a terminal view (that will also kill any running process) press "super+backspace" or "alt+escape"
+
+the first item in the application launcher is "system", which opens the system menu:
+, session (lock, suspend, exit, reboot, poweroff)
+, connections
+, timezone
+, passwords
+, packages (install, remove, update, make installation media)
+, backup (create, restore)
+
+packages in the installed system will be updated automatically
+this is safe, since the process of updating packages is atomic
+
+to have a really fail'safe system, redundant units are necessary
+you can create a backup on a removable storage device
+backups will be done using "BTRFS send", so they will be incremental and fast
+the backup device is encrypted, and contains a backup of your home directory
+	dencryption can be done using a password, as well as a key stored on the computer
+each time the device is connected, the backup procedure will be run automatically
+even in case of bit rot for data in home directory, this procedure repairs it automatically
+this backup can be easily restored on a new system
+these systems will then form an F2F network using GNUnet, through which they will be synced to each other
