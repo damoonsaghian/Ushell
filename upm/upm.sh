@@ -2,10 +2,7 @@
 
 script_dir="$(dirname "$(readlink -f "$0")")"
 
-# https://www.programming-books.io/essential/git/
-
 # https://www.programming-books.io/essential/bash/
-# https://doc.opensuse.org/documentation/leap/startup/html/book-startup/part-bash.html
 # https://steinbaugh.com/posts/posix.html
 # https://www.shellcheck.net/
 
@@ -21,7 +18,7 @@ script_dir="$(dirname "$(readlink -f "$0")")"
 # https://libcxx.llvm.org/
 
 # reproducible builds
-# during building, a file will be created that contains all the build dependencies and their versions,
+# during building, a .bdep file will be created that contains all the build dependencies and their versions,
 # 	in the order mentioned in the .upm file
 # this file can be used to reproduce the build
 # the built files then will be compared (using the CHK of files in gnunet),
@@ -33,7 +30,7 @@ script_dir="$(dirname "$(readlink -f "$0")")"
 
 if [ "$(id -u)" = 0 ]; then
 	cmd_dir="$UPM_ROOT"/usr/bin
-	sv_dir="$UPM_ROOT"/usr/share/sv
+	dinit_dir="$UPM_ROOT"/usr/share/dinit
 	dbus_dir="$UPM_ROOT"/usr/share/dbus-1 # dbus interfaces and services
 	apps_dir="$UPM_ROOT"/usr/share/applications # system services
 	state_dir="$UPM_ROOT"/var/lib
@@ -54,7 +51,7 @@ fi
 
 builds_dir="$state_dir"/upm/builds
 
-mkdir -p "$cmd_dir" "$sv_dir" "$dbus_dir" "$apps_dir" "$state_dir" "$cache_dir" "$builds_dir"
+mkdir -p "$cmd_dir" "$dinit_dir" "$dbus_dir" "$apps_dir" "$state_dir" "$cache_dir" "$builds_dir"
 
 upm_download() {
 	# download source packages into /var/cache/upm/<pkg-name>-<ver>
@@ -102,7 +99,7 @@ upm_install() {
 	
 	[ "$(id -u)" = 0 ] || return 0
 	
-	# create symlinks from "$build_dir/inst/sv/*" directories, to "$sv_dir"
+	# create symlinks from "$build_dir/inst/sv/*" directories, to "$dinit_dir"
 	
 	# when package is $gnunet_namespace/systemd-boot or linux
 	# run bootup.sh
@@ -157,7 +154,7 @@ elif [ "$1" = remove ]; then
 	
 	# removes the files mentioned in "$pkg_dir/exp/cmd" from "$cmd_dir"
 	
-	# remove corresponding symlinks in "$apps_dir" and "$sv_dir"
+	# remove corresponding symlinks in "$apps_dir" and "$dinit_dir"
 	
 	# remove package directory
 elif [ "$1" = update ]; then
