@@ -1,4 +1,0 @@
-desc "a unified collaborative development environment, and an ideal frontend for GNUnet,
-	with command'based user interface"
-
-dep bash qt6wayland quickshell
