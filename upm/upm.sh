@@ -29,19 +29,19 @@ script_dir="$(dirname "$(readlink -f "$0")")"
 [ -z "$ARCH" ] && ARCH="$(uname --machine)"
 
 if [ "$(id -u)" = 0 ]; then
-	cmd_dir="$UPM_ROOT"/usr/bin
-	dinit_dir="$UPM_ROOT"/usr/share/dinit
+	dinit_dir="$UPM_ROOT"/usr/share/dinit # system services
 	dbus_dir="$UPM_ROOT"/usr/share/dbus-1 # dbus interfaces and services
-	apps_dir="$UPM_ROOT"/usr/share/applications # system services
+	apps_dir="$UPM_ROOT"/usr/share/applications
+	cmd_dir="$UPM_ROOT"/usr/bin
 	state_dir="$UPM_ROOT"/var/lib
 	cache_dir="$UPM_ROOT"/var/cache
 else
-	cmd_dir="$HOME"/.local/bin
-	
 	data_dir="$XDG_DATA_HOME"
 	[ -z "$data_dir" ] && data_dir="$HOME"/.local/share
 	dbus_dir="$data_dir"/dbus-1
 	apps_dir="$data_dir"/applications
+
+	cmd_dir="$HOME"/.local/bin
 	
 	state_dir="$XDG_STATE_HOME"
 	[ -z "$state_dir" ] && state_dir="$HOME"/.local/state
@@ -49,19 +49,20 @@ else
 	[ -z "$cache_dir" ] && cache_dir="$HOME"/.cache
 fi
 
-builds_dir="$state_dir"/upm/builds
+pkgs_dir="$state_dir"/upm/pkgs
 
-mkdir -p "$cmd_dir" "$dinit_dir" "$dbus_dir" "$apps_dir" "$state_dir" "$cache_dir" "$builds_dir"
+mkdir -p "$cmd_dir" "$dinit_dir" "$dbus_dir" "$apps_dir" "$state_dir" "$cache_dir" "$pkgs_dir"
 
 upm_download() {
-	# download source packages into /var/cache/upm/<pkg-name>-<ver>
-	# download built packages into /pkg/<pkg-name>-<ver> then create a symlink <pkg-name> to the most recent version
+	# download source packages into "$cache_dir"/upm/pkgs-src/<pkg-name>/
+	# download built packages into  "$cache_dir"/upm/pkgs-built/<pkg-name>/
+	# if the gnunet namespace is not one of the default ones, it would be <pkg-name>-<gnunet-namespace> instead
 }
 
 upm_install() {
 	local gn_namespace="$1"
 	local pkg_name="$2"
-	local build_dir="$builds_dir/$gn_namespace/$pkg_name"
+	local build_dir="$pkgs_dir/$gn_namespace/$pkg_name/.cache"
 	
 	# read upm_import entries in .upm file, the:
 	# , create deps file
@@ -138,7 +139,7 @@ elif [ "$1" = install ]; then
 elif [ "$1" = remove ]; then
 	gn_namespace="$2"
 	pkg_name="$3"
-	pkg_dir="$builds_dir/$gn_namespace/$pkg_name"
+	pkg_dir="/upm/$gn_namespace/$pkg_name"
 	
 	if [ "$(id -u)" = 0 ]; then
 		# exit if package_name is: acpid bash bluez chrony dash dbus dte eudev fwupd gnunet systemd-boot linux netman dinit
@@ -202,6 +203,8 @@ else
 	echo "	upm install <gnunet-namespace> <package-name>"
 	echo "	upm remove <gnunet-namespace> <package-name>"
 	echo "	upm update"
+	echo "	upm find"
+	echo "	upm findapp"
 	echo "	upm mkinst [<device-name>] [x86_64|aarch64|riscv64]"
 	echo "	upm publish"
 fi
