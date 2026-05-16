@@ -1,5 +1,6 @@
 # this function can be used in .upm scripts to clone a tag branch from a git repository
 gitag_clone() {
+	# https://www.programming-books.io/essential/git/
 	# https://man.archlinux.org/listing/git
 	# https://git-scm.com/docs/partial-clone
 	# --depth 1
