@@ -3,6 +3,7 @@
 script_dir="$(dirname "$(readlink -f "$0")")"
 
 # https://www.programming-books.io/essential/bash/
+# https://cppcheatsheet.com/notes/tools/bash.html
 # https://steinbaugh.com/posts/posix.html
 # https://www.shellcheck.net/
 
