@@ -3,5 +3,3 @@
 
 # https://git.adelielinux.org/adelie/musl-locales
 # put the generated locale files in $pkg_dir/locale/
-
-# mimalloc
