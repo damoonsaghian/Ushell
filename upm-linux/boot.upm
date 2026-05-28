@@ -5,6 +5,7 @@
 # , libc
 # , sh, mount, and blkid
 # https://docs.kernel.org/admin-guide/initrd.html
+# https://github.com/illiliti/tinyramfs
 # https://gitlab.alpinelinux.org/alpine/mkinitfs
 # https://wiki.gentoo.org/wiki/Custom_Initramfs
 # https://www.linuxfromscratch.org/blfs/view/svn/postlfs/initramfs.html
