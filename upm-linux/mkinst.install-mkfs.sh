@@ -55,7 +55,7 @@ should_repaire() {
 		[ "$answer" != n ] && while [ "$answer" != n ]; do
 			[ -b /dev/mapper/rootfs ] || {
 				echo "enter the password to open the encrypted root partition"
-				cryptsetup open --allow-discards --persistent --type luks  "$target_partition2" "rootfs" || {
+				cryptsetup open --allow-discards --persistent --type luks  /dev/"$target_partition2" "rootfs" || {
 					echo "you entered a wrong password to decrypt root partition; try again? (Y/n) "
 					read -r answer
 					[ "$answer" = n ] && return
@@ -101,17 +101,17 @@ should_repaire "$target_device" || {
 	target_partition1="$(echo "$target_partitions" | cut -d " " -f1)"
 	target_partition2="$(echo "$target_partitions" | cut -d " " -f2)"
 	
-	mkfs.vfat -F 32 "$target_partition1"
+	mkfs.vfat -F 32 /dev/"$target_partition1"
 	
 	luks_key_file="$(mktemp)"
 	dd if=/dev/random of="$luks_key_file" bs=32 count=1 status=none
-	cryptsetup luksFormat --batch-mode --key-file "$luks_key_file" "$target_partition2" || exit
+	cryptsetup luksFormat --batch-mode --key-file "$luks_key_file" /dev/"$target_partition2" || exit
 	# other than a key'based slot (in slot 0), create a password based slot (in slot 1)
 	echo; echo "set the password for encryption of root partition"
 	echo "WARNING! do not use this password carelessly"
 	echo "in practice, it's only required when restoring your data from a backup, on a new system"
-	cryptsetup luksAddKey --key-file "$luks_key_file" "$target_partition2" || exit
-	cryptsetup open --allow-discards --persistent --type=luks --key-file "$luks_key_file" "$target_partition2" "rootfs"
+	cryptsetup luksAddKey --key-file "$luks_key_file" /dev/"$target_partition2" || exit
+	cryptsetup open --allow-discards --persistent --type=luks --key-file "$luks_key_file" /dev/"$target_partition2" "rootfs"
 	
 	mkfs.btrfs -f --quiet "/dev/mapper/rootfs" || exit
 }
@@ -122,7 +122,7 @@ trap "trap - EXIT; umount -q \"$new_root\"/boot; umount -q \"$new_root\"; rmdir 
 mount /dev/mapper/rootfs "$new_root" || exit
 
 mkdir -p "$new_root"/boot
-mount "$target_partition1" "$new_root"/boot || exit
+mount /dev/"$target_partition1" "$new_root"/boot || exit
 
 mkdir -p "$new_root"/var/lib/luks
 [ -z "$luks_key_file" ] && luks_key_file="$new_root"/var/lib/luks/key1
@@ -132,11 +132,11 @@ dd if=/dev/random of="$new_root"/var/lib/luks/key2 bs=32 count=1 status=none
 chmod 600 "$new_root"/var/lib/luks/key1
 chmod 600 "$new_root"/var/lib/luks/key2
 chmod 600 "$new_root"/var/lib/luks/key3
-cryptsetup luksAddKey --keyfile "$luks_key_file" --new-key-slot 2 "$target_partition2" "$new_root"/var/lib/luks/key2 || exit
-cryptsetup luksAddKey --keyfile "$luks_key_file" --new-key-slot 3 "$target_partition2" "$new_root"/var/lib/luks/key3 || exit
+cryptsetup luksAddKey --keyfile "$luks_key_file" --new-key-slot 2 /dev/"$target_partition2" "$new_root"/var/lib/luks/key2 || exit
+cryptsetup luksAddKey --keyfile "$luks_key_file" --new-key-slot 3 /dev/"$target_partition2" "$new_root"/var/lib/luks/key3 || exit
 
 # systemd bootloader
-cryptroot_uuid="$(blkid "$target_partition2" | sed -nr 's/^.*[[:space:]]+UUID="([^"]*)".*$/\1/p')"
+cryptroot_uuid="$(blkid /dev/"$target_partition2" | sed -nr 's/^.*[[:space:]]+UUID="([^"]*)".*$/\1/p')"
 modules="nvme,sd-mod,usb-storage,btrfs"
 [ -e /sys/module/vmd ] && modules="$modules,vmd"
 options="options cryptkey=EXEC=tpm-getkey cryptroot=UUID=$cryptroot_uuid cryptdm=rootfs\
@@ -164,7 +164,7 @@ if [ "$(cat /sys/block/"$target_device"/queue/discard_granularity)" -gt 0 ] &&
 then
 	discard_opt="discard,"
 fi
-boot_uuid="$(blkid "$target_partition1" | sed -nr 's/^.*[[:space:]]+UUID="([^"]*)".*$/\1/p')"
+boot_uuid="$(blkid /dev/"$target_partition1" | sed -nr 's/^.*[[:space:]]+UUID="([^"]*)".*$/\1/p')"
 mkdir -p "$new_root"/var/etc
 printf "UUID=$boot_uuid /boot vfat ${discard_opt}rw,noatime 0 0
 " > "$new_root"/var/etc/fstab
