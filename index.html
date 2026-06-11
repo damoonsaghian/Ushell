@@ -27,14 +27,23 @@ body {
 </div><div>; sh upm/install.sh
 </div><div>
 </div><div>UPM can also be used to build and maintain a Linux based operating system,
-</div><div>	with a user interface based on UShell and Uni
+</div><div>	with a user interface based on Ushell and Uni
 </div><div>first we must create a bootable installer on a removable storage device
 </div><div>to do that, we must be in a Linux system with these programs installed:
 </div><div>	curl (or wget) mkfs.vfat (dosfstools)
 </div><div>to bootstrap from source, these extra programs are required too:
 </div><div>	clang git ssh-keygen
 </div><div>then we must create a UEFI FAT32 partition on a removable storage device (eg /dev/sdX):
-</div><div>; printf "g\nn\n1\n\n\nt\nuefi\nw\nq\n" | sudo fdisk -w always /dev/sdX
+</div><div>; printf "g
+n
+1
+
+
+t
+uefi
+w
+q
+" | sudo fdisk -w always /dev/sdX
 </div><div>; sudo mkfs.vfat -F 32 "/dev/sdX1"
 </div><div>mount the partition:
 </div><div>; export target=/run/user/$(id -u)/mounts/sdX1
@@ -71,9 +80,6 @@ body {
 </div><div>, packages (install, remove, update, make installation media)
 </div><div>, backup (create, restore)
 </div><div>
-</div><div>packages in the installed system will be updated automatically
-</div><div>this is safe, since the process of updating packages is atomic
-</div><div>
 </div><div>to have a really fail'safe system, redundant units are necessary
 </div><div>you can create a backup on a removable storage device
 </div><div>backups will be done using "BTRFS send", so they will be incremental and fast
@@ -81,7 +87,10 @@ body {
 </div><div>	dencryption can be done using a password, as well as a key stored on the computer
 </div><div>each time the device is connected, the backup procedure will be run automatically
 </div><div>even in case of bit rot for data in home directory, this procedure repairs it automatically
-</div><div>this backup can be easily restored on a new system
+</div><div>this backup can easily be restored on a new system
 </div><div>these systems will then form an F2F network using GNUnet, through which they will be synced to each other
+</div><div>
+</div><div>to try Ushell now (before UPM is ready), boot into an Arch Linux live system, and run this:
+</div><div>; sh ushell/arch-install.sh
 </div>
 </body></html>
