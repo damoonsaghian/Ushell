@@ -290,7 +290,7 @@ set_password() {
 echo 'packages:'
 mode="$(menu "upgrade\nremove\ninstall SPM Linux")"
 
-# sudo upm
+# doas upm
 
 # if the content of "$spm_dir/status" is "error", turn "packages" and the "update" item under it, red
 
