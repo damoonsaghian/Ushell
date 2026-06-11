@@ -9,7 +9,7 @@ now just run this command:
 ; sh upm/install.sh
 
 UPM can also be used to build and maintain a Linux based operating system,
-	with a user interface based on UShell and Uni
+	with a user interface based on Ushell and Uni
 first we must create a bootable installer on a removable storage device
 to do that, we must be in a Linux system with these programs installed:
 	curl (or wget) mkfs.vfat (dosfstools)
