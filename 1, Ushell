@@ -1,0 +1,48 @@
+Ushell is a Wayland shell, based on QuickShell ("https://quickshell.org/")
+
+there is an application launcher which can be toggled by pressing "super" (mod+mod) or "alt+tab"
+applications will be opened in their own workspace,	that will also contain any extra windows opened by that application
+to close the focused window, press "super+backspace" or "alt+escape"
+
+entering "space" as the first character in application launcher, opens terminal emulator
+the entered command will be run in a new terminal view, inside a list at the right column
+when terminal view finishes its job, if there is any output, it'll be transfered to the history list under the prompt
+to navigate between terminal views, use "ctrl+pageup" and "ctrl+pagedown" keys
+to go back to the prompt, press "ctrl+tab"
+to navigate in history list, use "up" and "down" arrow keys
+	you can press enter on an entry to rerun the command, or press space to first edit it
+to close a terminal view (that will also kill any running process) press "super+backspace" or "alt+escape"
+
+the first item in the application launcher is "system", which opens the system menu:
+, session (lock, suspend, exit, reboot, poweroff)
+, connections
+, timezone
+, passwords
+, packages (install, remove, update, make installation media)
+, backup (create, restore)
+
+to have a really fail'safe system, redundant units are necessary
+you can create a backup on a removable storage device
+backups will be done using "BTRFS send", so they will be incremental and fast
+the backup device is encrypted, and contains a backup of your home directory
+	dencryption can be done using a password, as well as a key stored on the computer
+each time the device is connected, the backup procedure will be run automatically
+even in case of bit rot for data in home directory, this procedure repairs it automatically
+this backup can easily be restored on a new system
+these systems will then form an F2F network using GNUnet, through which they will be synced to each other
+
+the following shows how to install an OS based on Chimera Linux, with Ushell as its user interface
+first we must create a bootable installer on a removable storage device
+to do that, we must be in a Linux system with these programs installed:
+	curl (or wget) mkfs.vfat (dosfstools)
+then we must create a UEFI FAT32 partition on a removable storage device (eg /dev/sdX):
+; printf "g\nn\n1\n\n\nt\nuefi\nw\nq\n" | sudo fdisk -w always /dev/sdX
+; sudo mkfs.vfat -F 32 "/dev/sdX1"
+mount the partition:
+; export target=/run/user/$(id -u)/mounts/sdX1
+; mkdir -p $target
+; sudo mount -o uid=$(id -u),gid=$(id -g) /dev/sdX1 $target
+then create the bootable installer:
+; sh chimera/mkinst.sh $target
+; sudo umount $target
+now boot into the installation media, and follow the instructions
