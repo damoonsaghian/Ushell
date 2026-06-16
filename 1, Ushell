@@ -18,7 +18,7 @@ the first item in the application launcher is "system", which opens the system m
 , connections
 , timezone
 , passwords
-, packages (install, remove, update, make installation media)
+, packages (install, remove, update, create an installation media)
 , backup (create, restore)
 
 to have a really fail'safe system, redundant units are necessary
@@ -31,18 +31,6 @@ even in case of bit rot for data in home directory, this procedure repairs it au
 this backup can easily be restored on a new system
 these systems will then form an F2F network using GNUnet, through which they will be synced to each other
 
-the following shows how to install an OS based on Chimera Linux, with Ushell as its user interface
-first we must create a bootable installer on a removable storage device
-to do that, we must be in a Linux system with these programs installed:
-	curl (or wget) mkfs.vfat (dosfstools)
-then we must create a UEFI FAT32 partition on a removable storage device (eg /dev/sdX):
-; printf "g\nn\n1\n\n\nt\nuefi\nw\nq\n" | sudo fdisk -w always /dev/sdX
-; sudo mkfs.vfat -F 32 "/dev/sdX1"
-mount the partition:
-; export target=/run/user/$(id -u)/mounts/sdX1
-; mkdir -p $target
-; sudo mount -o uid=$(id -u),gid=$(id -g) /dev/sdX1 $target
-then create the bootable installer:
-; sh chimera/mkinst.sh $target
-; sudo umount $target
-now boot into the installation media, and follow the instructions
+to install an OS based on Chimera Linux, with Ushell as its user interface,
+	boot into a Chimera Linux live image and run this:
+; sh chimera/install.sh

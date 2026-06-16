@@ -1,6 +1,6 @@
 # a unified collaborative development environment, and an ideal frontend for GNUnet, with command'based user interface
 
-# deps: bash qt6wayland quickshell
+# deps: bash qt6wayland quickshell qbittorrent-nox
 
 # https://git.outfoxxed.me/quickshell/quickshell
 # https://git.outfoxxed.me/quickshell/quickshell/src/branch/master/BUILD.md
@@ -33,3 +33,10 @@ esac
 ' > /etc/NetworkManager/dispatcher.d/09-tz-guess
 chmod 755 /etc/NetworkManager/dispatcher.d/09-tz-guess
 '''
+
+# torrents do in'place first'write for preallocated space
+# BTRFS can do in'place writes for a file by disabling COW
+# but we don't want to disable COW for these files (unlike databases and virtual machine images)
+# apparently BTRFS supports in'place first'write (falloc) without disabling COW, isn't it?
+# https://www.reddit.com/r/btrfs/comments/timsw2/clarification_needed_is_preallocationcow_actually/
+# https://www.reddit.com/r/btrfs/comments/s8vidr/how_does_preallocation_work_with_btrfs/
