@@ -292,6 +292,26 @@ mode="$(menu "upgrade\nremove\ninstall SPM Linux")"
 
 # doas upm
 
+# make installer
+[ -z "$ARCH" ] && ARCH="$(uname --machine)"
+# bsdtar -C "$target_dir" -xf "$iso_file_path"
+# printf "g\nn\n1\n\n\nt\nuefi\nw\nq\n" | sudo fdisk -w always /dev/sdX
+# sudo mkfs.vfat -F 32 "/dev/sdX1"
+# export target=/run/user/$(id -u)/mounts/sdX1
+# mkdir -p $target
+# sudo mount -o uid=$(id -u),gid=$(id -g) /dev/sdX1 $target
+# copy files to $target
+# sudo umount $target
+
+# fwupd
+# boot'firmware updates need special care
+# unless there is a read'only backup, firmware update is not a good idea
+# so warn and ask the user if she wants the update
+# doas fwupdmgr get-devices
+# doas fwupdmgr refresh
+# doas fwupdmgr get-updates
+# doas fwupdmgr update
+
 # if the content of "$spm_dir/status" is "error", turn "packages" and the "update" item under it, red
 
 # add section: some suggested apps like termulator

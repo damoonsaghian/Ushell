@@ -93,8 +93,6 @@ https://doc.qt.io/qt-6/qml-qtquick-effects-multieffect.html
 // dim screen in several steps before turning screen off
 
 // screenshot and screencast
-// https://github.com/ammen99/wf-recorder
-// https://gitlab.freedesktop.org/emersion/grim
 
 // hide cursor after 8 seconds, and when typing begins
 

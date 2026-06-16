@@ -9,7 +9,6 @@ export TZ="$HOME/.config/tz"
 export LANG="en_US.UTF-8"
 export MUSL_LOCPATH="/usr/share/i18n/locales/musl"
 export SHELL="sudo -u "$USER" /usr/bin/bash --noprofile --norc -i \"$script_dir\"/bashrc.sh"
-export PS1='\n\[\e[7m\] \w \n\[\e[0m\]> '
 export PATH="/usr/local/bin:/usr/bin:/$HOME/.local/bin"
 export XDG_RUNTIME_DIR="/run/user/$(id -u)"
 export DBUS_SESSION_BUS_ADDRESS="unix:path=$XDG_RUNTIME_DIR/bus"
