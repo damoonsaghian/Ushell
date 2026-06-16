@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset='utf-8'>
-<title>UPM</title>
+<title>Ushell</title>
 <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/hack-font@3.3.0/build/web/hack.css'>
 <style>
 body {
@@ -15,49 +15,8 @@ body {
 	tab-size: 4;
 }
 </style>
-</head><body><a href='https://github.com/damoonsaghian/UPM'><h1>UPM</h1></a>
-<h2>1, UPM</h2><div>UPM uses a simple method to unify software building and package management
-</div><div>
-</div><div>UPM can be used as a software builder and package manager, on any Posix system
-</div><div>you just need to have either "curl" or "wget" on your system
-</div><div>if "bubblewrap" is available, UPM will use it to sandbox packages
-</div><div>to bootstrap from source, these extra programs are required too:
-</div><div>	clang git ssh-keygen
-</div><div>now just run this command:
-</div><div>; sh upm/install.sh
-</div><div>
-</div><div>UPM can also be used to build and maintain a Linux based operating system,
-</div><div>	with a user interface based on Ushell and Uni
-</div><div>first we must create a bootable installer on a removable storage device
-</div><div>to do that, we must be in a Linux system with these programs installed:
-</div><div>	curl (or wget) mkfs.vfat (dosfstools)
-</div><div>to bootstrap from source, these extra programs are required too:
-</div><div>	clang git ssh-keygen
-</div><div>then we must create a UEFI FAT32 partition on a removable storage device (eg /dev/sdX):
-</div><div>; printf "g
-n
-1
-
-
-t
-uefi
-w
-q
-" | sudo fdisk -w always /dev/sdX
-</div><div>; sudo mkfs.vfat -F 32 "/dev/sdX1"
-</div><div>mount the partition:
-</div><div>; export target=/run/user/$(id -u)/mounts/sdX1
-</div><div>; mkdir -p $target
-</div><div>; sudo mount -o uid=$(id -u),gid=$(id -g) /dev/sdX1 $target
-</div><div>then create the bootable installer:
-</div><div>; sh upm-linux/mkinst.sh $target
-</div><div>; sudo umount $target
-</div><div>now boot into the installation media, and follow the instructions
-</div><div>
-</div><div>packages in the installed system will be updated automatically
-</div><div>this is safe, since the process of updating packages is atomic
-</div>
-<h2>2, Ushell</h2><div>Ushell is a Wayland shell, based on QuickShell (<a href="https://quickshell.org/">https://quickshell.org/</a>)
+</head><body><a href='https://github.com/damoonsaghian/Ushell'><h1>Ushell</h1></a>
+<h2>1, Ushell</h2><div>Ushell is a Wayland shell, based on QuickShell (<a href="https://quickshell.org/">https://quickshell.org/</a>)
 </div><div>
 </div><div>there is an application launcher which can be toggled by pressing "super" (mod+mod) or "alt+tab"
 </div><div>applications will be opened in their own workspace,	that will also contain any extra windows opened by that application
@@ -77,7 +36,7 @@ q
 </div><div>, connections
 </div><div>, timezone
 </div><div>, passwords
-</div><div>, packages (install, remove, update, make installation media)
+</div><div>, packages (install, remove, update, create an installation media)
 </div><div>, backup (create, restore)
 </div><div>
 </div><div>to have a really fail'safe system, redundant units are necessary
@@ -90,7 +49,8 @@ q
 </div><div>this backup can easily be restored on a new system
 </div><div>these systems will then form an F2F network using GNUnet, through which they will be synced to each other
 </div><div>
-</div><div>to try Ushell now (before UPM is ready), boot into an Arch Linux live system, and run this:
-</div><div>; sh ushell/arch-install.sh
+</div><div>to install an OS based on Chimera Linux, with Ushell as its user interface,
+</div><div>	boot into a Chimera Linux live image and run this:
+</div><div>; sh chimera/install.sh
 </div>
 </body></html>
