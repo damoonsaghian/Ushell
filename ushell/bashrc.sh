@@ -8,7 +8,7 @@ if [ "$CODEVSHELL_PROMPT" = true ]; then
 else
 	PS1='\n─\e[7m \[${PWD}\] \e[0m\[$(printf "%0.s─" $(seq 1 $((COLUMNS - ${#PWD} - 3)) ))\]\n'
 	PS2=""
-	PS0='\[$(printf "%0.s┄" $(seq 1 $((COLUMNS)) ))\]\n'
+	PS0='\[$(printf "%0.s-" $(seq 1 $((COLUMNS)) ))\]\n'
 	_run_cmd() {
 		printf '%0.s-' $(seq 1 $COLUMNS)
 		echo

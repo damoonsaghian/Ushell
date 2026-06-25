@@ -1,3 +1,9 @@
+#!/usr/bin/env sh
+
+[ "$1" = priv ] || {
+	doas setpriv --reuid=nu --regid=nu --groups=input,video,audio sh /usr/local/bin/ushell priv
+}
+
 script_dir="$(dirname "$(readlink -f "$0")")"
 
 [ -f /etc/profile ] && . /etc/profile
