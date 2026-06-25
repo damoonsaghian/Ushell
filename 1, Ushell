@@ -31,6 +31,6 @@ even in case of bit rot for data in home directory, this procedure repairs it au
 this backup can easily be restored on a new system
 these systems will then form an F2F network using GNUnet, through which they will be synced to each other
 
-to install an OS based on Chimera Linux, with Ushell as its user interface,
-	boot into a Chimera Linux live image and run this:
-; sh chimera/install.sh
+the ultimate goal is to use Ushell as the user interface of UPM Linux
+but before that, you can try it on Arch Linux; just boot into an Arch Linux live image and run this:
+; sh archinstall.sh
