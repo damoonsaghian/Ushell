@@ -30,6 +30,10 @@ read -r target_device
 target_device_num="$(cat /sys/class/block/"$target_device"/dev | cut -d ":" -f 1):0"
 target_device="$(basename "$(readlink /dev/block/"$target_device_num")")"
 
+printf "WARNING! all the data on \"/dev/$target_device\" will be erased; continue? (y/N) "
+read -r answer
+[ "$answer" = y ] || exit
+
 sfdisk --quiet --wipe always --label gpt "/dev/$target_device" <<-EOF
 size=260M, type=uefi
 ,
@@ -41,20 +45,18 @@ target_partition2="$(echo "$target_partitions" | cut -d " " -f2)"
 mkfs.vfat -F 32 /dev/"$target_partition1"
 mkfs.btrfs -f /dev/"$target_partition2"
 
-btrfs filesystem mkswapfile --size 4g --uuid clear /mnt/var/swapfile
-# fstab: /var/swapfile none swap defaults 0 0
-
 mount /dev/"$target_partition2" /mnt
 mkdir /mnt/boot
 mount /dev/"$target_partition1" /mnt/boot
-genfstab -U /mnt >> /mnt/etc/fstab
+mkdir /mnt/etc
+genfstab -U /mnt > /mnt/etc/fstab
 
 cpu_vendor_id="$(cat /proc/cpuinfo | grep vendor_id | head -n1 | sed -n "s/vendor_id[[:space:]]*:[[:space:]]*//p")"
 [ "$cpu_vendor_id" = AuthenticAMD ] && ucode=amd-ucode
 [ "$cpu_vendor_id" = GenuineIntel ] && ucode=intel-ucode
 
-pacstrap -K /mnt base $ucode memtest86+-efi linux linux-firmware linux-firmware-marvell sof-firmware fwupd \
-	btrfs-progs dosfstools opendoas nano bash-completion man-db \
+pacstrap -K /mnt base $ucode memtest86+-efi linux linux-firmware linux-firmware-marvell sof-firmware \
+	fwupd btrfs-progs dosfstools opendoas nano bash-completion man-db \
 	chrony networkmanager bluez bluez-obex pipewire-audio pipewire-pulse wireplumber \
 	adobe-source-code-pro-fonts noto-fonts-emoji noto-fonts noto-fonts-cjk \
 	strike fiery index-fm maui-station maui-nota maui-pix maui-clip vvave communicator
@@ -99,12 +101,7 @@ When = PostTransaction
 Exec = /usr/bin/systemctl restart systemd-boot-update.service
 EOF
 
-arch-chroot /mnt systemctl enable chronyd systemd-resolved NetworkManager bluetooth obex
-
-printf "\nen_US.UTF-8 UTF-8\n" > /mnt/etc/locale.gen
-arch-chroot /mnt locale-gen
-echo 'LANG=en_US.UTF-8' > /mnt/etc/locale.conf
-echo archlinux > /mnt/etc/hostname
+arch-chroot /mnt systemctl enable systemd-timesyncd systemd-resolved NetworkManager bluetooth obex
 
 cat <<-'EOF' > /mnt/usr/local/bin/upm
 #!/usr/bin/env sh
@@ -122,30 +119,50 @@ find) pacman -Ss $2 ;;
 esac
 EOF
 chmod +x /mnt/usr/local/bin/upm
-# doas rule for upm
+echo 'permit nopass nu cmd /usr/local/bin/upm' > /mnt/etc/doas.d/upm.conf
 
-ln -s /mnt/usr/bin/doas /mnt/usr/local/bin/sudo
+ln -s /usr/bin/doas /mnt/usr/local/bin/sudo
 
 echo; echo "set root password"
 while ! arch-chroot /mnt passwd; do
 	echo "please retry"
 done
-
-# create a normal user
 arch-chroot /mnt useradd --base-dir / --create-home --shell /usr/local/bin/ushell nu
 echo; echo "set lock'screen password"
 while ! arch-chroot /mnt passwd nu; do
 	echo "please retry"
 done
 
-# autologin
+cat <<-'EOF' > /mnt/usr/local/bin/autologin
+# set resource limits for realtime applications like the rt module in pipewire
+ulimit -r 95 -e -19 -l 4194304
+
+modprobe zram
+zramctl /dev/zram0 --algorithm zstd --size "$(($(grep -Po "MemTotal:\s*\K\d+" /proc/meminfo)/2))KiB"
+mkswap -U clear /dev/zram0
+swapon --discard --priority 100 /dev/zram0
+
+exec login -f nu
+EOF
+chmod +x /mnt/usr/local/bin/autologin
+
+echo '[Service]
+Type=simple
+ExecStart=
+ExecStart=-/usr/bin/agetty --skip-login --nonewline --noissue --noreset --noclear -l /usr/local/bin/autologin - ${TERM}
+' > /mnt/etc/systemd/system/getty@tty1.service.d/autologin.conf
+echo '[Service]
+Type=simple
+ExecStart=
+ExecStart=-/usr/bin/agetty --skip-login --nonewline --noissue --noreset --noclear -l /usr/local/bin/autologin - ${TERM}
+' > /mnt/etc/systemd/system/getty@tty2.service.d/autologin.conf
 
 script_dir="$(dirname "$(readlink -f "$0")")"
 cp -r "$script_dir"/ushell /mnt/usr/local/share/
-chmod +x /mnt/usr/local/share/ushell/ushell
-ln -sf /usr/local/share/ushell/ushell /mnt/usr/local/bin/
 
-cat <<-EOF > /etc/doas.d/ushell.conf
+chmod +x /mnt/usr/local/share/ushell/ushell.sh
+ln -sf /usr/local/share/ushell/ushell.sh /mnt/usr/local/bin/ushell
+cat <<-EOF > /mnt/etc/doas.d/ushell.conf
 permit nopass nu cmd setpriv --reuid=nu --regid=nu --groups=input,video,audio /usr/local/bin/ushell priv
 permit nopass nu cmd /usr/bin/passwd nu
 EOF
@@ -154,8 +171,8 @@ echo '#!/bin/sh
 case "$2" in
 up) doas -u nu sh /usr/local/share/ushell/system.sh tz guess ;;
 esac
-' > /etc/NetworkManager/dispatcher.d/09-tz-guess
-chmod 755 /etc/NetworkManager/dispatcher.d/09-tz-guess
+' > /mnt/etc/NetworkManager/dispatcher.d/09-tz-guess
+chmod 755 /mnt/etc/NetworkManager/dispatcher.d/09-tz-guess
 
 echo; echo "installation completed successfully"
 printf "reboot the system? (Y/n) "
