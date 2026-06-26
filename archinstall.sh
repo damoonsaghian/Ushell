@@ -18,12 +18,6 @@ else
 	done
 fi
 
-[ $(id -u) = 0 ] || {
-	echo "non'root installation is not yet implemented"
-	exit
-	# https://gitlab.postmarketos.org/postmarketOS/coldbrew
-}
-
 echo; echo "available storage devices:"
 lsblk --nodep -o NAME,SIZE,MODEL,MOUNTPOINTS | while read -r line; do printf "\t$line\n"; done
 printf "enter the name of the target device for installation: "
@@ -47,7 +41,7 @@ target_partition2="$(echo "$target_partitions" | cut -d " " -f2)"
 mkfs.vfat -F 32 /dev/"$target_partition1"
 mkfs.btrfs -f /dev/"$target_partition2"
 
-btrfs filesystem mkswapfile --size 4g --uuid clear "$new_root"/var/swapfile
+btrfs filesystem mkswapfile --size 4g --uuid clear /mnt/var/swapfile
 # fstab: /var/swapfile none swap defaults 0 0
 
 mount /dev/"$target_partition2" /mnt
@@ -55,33 +49,15 @@ mkdir /mnt/boot
 mount /dev/"$target_partition1" /mnt/boot
 genfstab -U /mnt >> /mnt/etc/fstab
 
-case "$(uname -m)" in
-x86*)
-	cpu_vendor_id="$(grep vendor_id /proc/cpuinfo | head -n1 | sed -n "s/vendor_id[[:space:]]*:[[:space:]]*//p")"
-	[ "$cpu_vendor_id" = AuthenticAMD ] && ucode=ucode-amd
-	[ "$cpu_vendor_id" = GenuineIntel ] && ucode=ucode-intel
-;;
-esac
+cpu_vendor_id="$(cat /proc/cpuinfo | grep vendor_id | head -n1 | sed -n "s/vendor_id[[:space:]]*:[[:space:]]*//p")"
+[ "$cpu_vendor_id" = AuthenticAMD ] && ucode=amd-ucode
+[ "$cpu_vendor_id" = GenuineIntel ] && ucode=intel-ucode
 
-chimera-bootstrap "$new_root" base-full-kernel base-full-firmware $ucode systemd-boot linux-stable cryptsetup fwupd bluez \
-	base-full-core base-full-console base-full-sound base-full-net-tools networkmanager modemmanager curl \
-	btrfs-progs dosfstools util-linux-fdisk util-linux-fstrim util-linux-mkfs \
-	chrony opendoas nano less cronie acpid \
-	fonts-noto fonts-noto-emoji-ttf fonts-noto-sans-cjk fonts-source-code-pro-otf
-
-chimera-chroot "$new_root" apk add --no-interactive chimera-repo-user
-chimera-chroot "$new_root" apk update
-chimera-chroot "$new_root" apk add --no-interactive tpm2-tools
-
-# tmp-getkey.sh
-
-# bootup.sh
-# run when kernel or systemd-boot are updated
-
-# suspend system with support for hooks (needed for some drivers)
-# https://github.com/jirutka/zzz
-# doas rules
-
+pacstrap -K /mnt base $ucode memtest86+-efi linux linux-firmware linux-firmware-marvell sof-firmware fwupd \
+	btrfs-progs dosfstools opendoas nano bash-completion man-db \
+	chrony networkmanager bluez bluez-obex pipewire-audio pipewire-pulse wireplumber \
+	adobe-source-code-pro-fonts noto-fonts-emoji noto-fonts noto-fonts-cjk \
+	strike fiery index-fm maui-station maui-nota maui-pix maui-clip vvave communicator
 
 mkdir -p /mnt/boot/loader/entries
 cat <<-EOF > /mnt/boot/loader/loader.conf
@@ -110,7 +86,7 @@ title Memtest86+
 efi /memtest86+/memtest.efi
 EOF
 
-chimera-chroot /mnt bootctl install
+arch-chroot /mnt bootctl install
 mkdir -p /mnt/etc/pacman.d/hooks
 cat <<-EOF > /mnt/etc/pacman.d/hooks/95-systemd-boot.hook
 [Trigger]
@@ -123,43 +99,63 @@ When = PostTransaction
 Exec = /usr/bin/systemctl restart systemd-boot-update.service
 EOF
 
-echo; echo "set root password (can be the same as he one used to encrypt the root partition)"
-echo "WARNING! do not use this password carelessly"
-echo "in practice, it's only required for manually changing system files, ie almost never"
-while ! chimera-chroot "$new_root" passwd; do
+arch-chroot /mnt systemctl enable chronyd systemd-resolved NetworkManager bluetooth obex
+
+printf "\nen_US.UTF-8 UTF-8\n" > /mnt/etc/locale.gen
+arch-chroot /mnt locale-gen
+echo 'LANG=en_US.UTF-8' > /mnt/etc/locale.conf
+echo archlinux > /mnt/etc/hostname
+
+cat <<-'EOF' > /mnt/usr/local/bin/upm
+#!/usr/bin/env sh
+# wrapper around pacman
+case $1 in
+install) pacman -S $2 ;;
+remove) pacman -Rs $2 ;;
+update)
+	pacman -Syu
+	orphan_pkgs="$(pacman -Qdttq)"
+	pacman -Rns $orphan_pkgs
+	pacman -Sc
+	;;
+find) pacman -Ss $2 ;;
+esac
+EOF
+chmod +x /mnt/usr/local/bin/upm
+# doas rule for upm
+
+ln -s /mnt/usr/bin/doas /mnt/usr/local/bin/sudo
+
+echo; echo "set root password"
+while ! arch-chroot /mnt passwd; do
 	echo "please retry"
 done
 
 # create a normal user
-chimera-chroot "$new_root" useradd --base-dir / --create-home --shell /usr/local/bin/ushell nu
+arch-chroot /mnt useradd --base-dir / --create-home --shell /usr/local/bin/ushell nu
 echo; echo "set lock'screen password"
-while ! chimera-chroot "$new_root" passwd nu; do
+while ! arch-chroot /mnt passwd nu; do
 	echo "please retry"
 done
 
-# dinit autologin
-ln -s /usr/local/share/util-linux/autologin.sh "$new_root"/usr/local/bin/autologin
-chmod +x "$new_root"/usr/local/share/util-linux/autologin.sh
-
-# mono'space fonts:
-# , wide characters are forced to squeeze
-# , narrow characters are forced to stretch
-# , bold characters don't have enough room
-# proportional font for code:
-# , generous spacing
-# , large punctuation
-# , and easily distinguishable characters
-# , while allowing each character to take up the space that it needs
-# Iosevka Aile (just change "I" character)
-# "https://github.com/iaolo/iA-Fonts/tree/master/iA%20Writer%20Quattro" (just change "I" character)
-# monospace font is still needed for terminal emulator
-
-# strike fiery index-fm maui-station maui-nota maui-pix maui-clip vvave
-# qt6-qtbase-printsupport
-# kmouth
-# communicator
+# autologin
 
 script_dir="$(dirname "$(readlink -f "$0")")"
+cp -r "$script_dir"/ushell /mnt/usr/local/share/
+chmod +x /mnt/usr/local/share/ushell/ushell
+ln -sf /usr/local/share/ushell/ushell /mnt/usr/local/bin/
+
+cat <<-EOF > /etc/doas.d/ushell.conf
+permit nopass nu cmd setpriv --reuid=nu --regid=nu --groups=input,video,audio /usr/local/bin/ushell priv
+permit nopass nu cmd /usr/bin/passwd nu
+EOF
+
+echo '#!/bin/sh
+case "$2" in
+up) doas -u nu sh /usr/local/share/ushell/system.sh tz guess ;;
+esac
+' > /etc/NetworkManager/dispatcher.d/09-tz-guess
+chmod 755 /etc/NetworkManager/dispatcher.d/09-tz-guess
 
 echo; echo "installation completed successfully"
 printf "reboot the system? (Y/n) "
