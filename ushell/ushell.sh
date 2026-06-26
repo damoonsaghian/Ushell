@@ -21,7 +21,7 @@ export DBUS_SESSION_BUS_ADDRESS="unix:path=$XDG_RUNTIME_DIR/bus"
 rm -rf "$XDG_RUNTIME_DIR"
 mkdir -pm 0700 "$XDG_RUNTIME_DIR"
 
-spm srv
+# run dinit user services
 
 umask 022
 
