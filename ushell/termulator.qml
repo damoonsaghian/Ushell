@@ -2,19 +2,11 @@
 terminal emulator
 https://api.kde.org/mauikit/mauikit-terminal/html/index.html
 
+terminal views are placed in a vertical stack, with the unfocused views, shrinked to a single line
+to navigate between terminal views, use "ctrl+pageup" and "ctrl+pagedown" keys
+to open a new terminal emulator view, press "ctrl+n"
+
 term box has a maximum hight which is the reported height, but the visible height adjusts to text
-
-prompt term:
-show PWD above prompt term box
-when /tmp/codevshell-term-env changes, update it
-CODEVSHELL_PROMPT=true
-
-when /tmp/codevshell-command changes, open a term box under the prompt
-CODEVSHELL_COMMAND=$command
-don't close on exit, if there are any text
-
-when a term box is opened, focus
-when its job is finished, focus prompt
 
 scroll up: Page_Up
 scroll down: Page_Down

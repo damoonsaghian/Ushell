@@ -3,7 +3,13 @@
 # https://git.outfoxxed.me/quickshell/quickshell
 # https://git.outfoxxed.me/quickshell/quickshell/src/branch/master/BUILD.md
 
-# ushell executable
+echo -n '#!/usr/bin/env sh
+if [ "$1" = priv ]; then
+	. "$(dirname "$(readlink -f "$0")")"/../../1.sh
+else
+	doas setpriv --reuid=nu --regid=nu --groups=input,video,audio /usr/bin/ushell priv
+fi
+' > exp/cmd/ushell
 
 cat <<-EOF > /etc/doas.d/ushell.conf
 permit nopass nu cmd setpriv --reuid=nu --regid=nu --groups=input,video,audio /usr/bin/ushell priv

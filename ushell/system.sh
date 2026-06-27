@@ -232,6 +232,8 @@ router) manage_router ;;
 esac
 
 set_timezone() {
+	# "$HOME"/.config/tz
+	
 	local tzdata_path="$script_dir"/tzdata
 	# when codev-util is not installed using its SPMbuild.sh script:
 	[ -d "$tzdata_path" ] || tzdata_path=/usr/share/zoneinfo/right
@@ -248,6 +250,7 @@ set_timezone() {
 		# https://www.freedesktop.org/software/geoclue/docs/gdbus-org.freedesktop.GeoClue2.Location.html
 		# https://github.com/evansiroky/timezone-boundary-builder (releases -> timezone-with-oceans-now.geojson.zip)
 		# https://github.com/BertoldVdb/ZoneDetect
+		# https://wiki.archlinux.org/title/System_time#Setting_based_on_geolocation
 		# if failed to detect, set to UTC
 		if [ -e "$HOME/.config/tz" ]; then
 			ln -s "$tzdata_path/$continent/$city" "$HOME"/.cache/system/tz-guess

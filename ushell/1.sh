@@ -1,20 +1,12 @@
-#!/usr/bin/env sh
-
-[ "$1" = priv ] || {
-	doas setpriv --reuid=nu --regid=nu --groups=input,video,audio sh /usr/local/bin/ushell priv
-}
-
 script_dir="$(dirname "$(readlink -f "$0")")"
 
 [ -f /etc/profile ] && . /etc/profile
 for profile_script in /usr/share/profile/*.sh; do
-	[ -r "$profile_script" ] && . "$profile_script"
+	[ -f "$profile_script" ] && . "$profile_script"
 done
 
 export TZ="$HOME/.config/tz"
-export LANG="en_US.UTF-8"
-export MUSL_LOCPATH="/usr/share/i18n/locales/musl"
-export SHELL="sudo -u "$USER" /usr/bin/bash --noprofile --norc -i \"$script_dir\"/bashrc.sh"
+export SHELL="doas -u \"$USER\" /usr/bin/bash --noprofile --norc -i \"$script_dir\"/bashrc.sh"
 export PATH="/usr/local/bin:/usr/bin:/$HOME/.local/bin"
 export XDG_RUNTIME_DIR="/run/user/$(id -u)"
 export DBUS_SESSION_BUS_ADDRESS="unix:path=$XDG_RUNTIME_DIR/bus"
@@ -25,8 +17,18 @@ mkdir -pm 0700 "$XDG_RUNTIME_DIR"
 
 umask 022
 
+start_cli() {
+	# ask:
+	# , auto repair (if no internet and no LAN, setup network; upm update; also if not on tty1, restart tty1)
+	# , backup
+	# , copy projects
+	# , terminal: ask user for lockscreen password, and exit if wrong
+	
+	bash --noprofile --norc -i "$script_dir"/bashrc.sh
+}
+
 if [ "$(tty)" = "/dev/tty1" ] && [ "$(id -u)" != 0 ]; then
-	qs "$script_dir"/main.qml || bash --noprofile --norc -i "$script_dir"/bash_profile.sh
+	qs "$script_dir"/main.qml || start_cli
 else
-	bash --noprofile --norc -i "$script_dir"/bash_profile.sh
+	start_cli
 fi
