@@ -160,10 +160,13 @@ ExecStart=-/usr/bin/agetty --skip-login --nonewline --noissue --noreset --noclea
 script_dir="$(dirname "$(readlink -f "$0")")"
 cp -r "$script_dir"/ushell /mnt/usr/local/share/
 
-chmod +x /mnt/usr/local/share/ushell/1.sh
-ln -sf /usr/local/share/ushell/1.sh /mnt/usr/local/bin/ushell
+echo -n '#!/usr/bin/env sh
+doas setpriv --reuid=nu --regid=nu --groups=input,video,audio sh /usr/local/share/ushell/1.sh
+' > /mnt/usr/local/bin/ushell
+chmod +x /mnt/usr/local/bin/ushell
+
 cat <<-EOF > /mnt/etc/doas.d/ushell.conf
-permit nopass nu cmd setpriv --reuid=nu --regid=nu --groups=input,video,audio /usr/local/bin/ushell priv
+permit nopass nu cmd setpriv --reuid=nu --regid=nu --groups=input,video,audio sh /usr/local/share/ushell/1.sh
 permit nopass nu cmd /usr/bin/passwd nu
 EOF
 

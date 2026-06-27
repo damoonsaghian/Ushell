@@ -4,14 +4,9 @@ there is an application launcher which can be toggled by pressing "super" (mod+m
 applications will be opened in their own workspace,	that will also contain any extra windows opened by that application
 to close the focused window, press "super+backspace" or "alt+escape"
 
-entering "space" as the first character in application launcher, opens terminal emulator
-the entered command will be run in a new terminal view, inside a list at the right column
-when terminal view finishes its job, if there is any output, it'll be transfered to the history list under the prompt
-to navigate between terminal views, use "ctrl+pageup" and "ctrl+pagedown" keys
-to go back to the prompt, press "ctrl+tab"
-to navigate in history list, use "up" and "down" arrow keys
-	you can press enter on an entry to rerun the command, or press space to first edit it
-to close a terminal view (that will also kill any running process) press "super+backspace" or "alt+escape"
+pressing "space" as the first character in the search box of the application launcher, activates super prompt
+by typing special keywords in the super prompt, you have a fast access to various small but useful things like:
+	mathematical calculations, unit conversions, date at different timezones, dictionary, encyclopedia, etc
 
 the first item in the application launcher is "system", which opens the system menu:
 , session (lock, suspend, exit, reboot, poweroff)
@@ -19,6 +14,7 @@ the first item in the application launcher is "system", which opens the system m
 , timezone
 , passwords
 , packages (install, remove, update, create an installation media)
+, terminal
 , backup (create, restore)
 
 to have a really fail'safe system, redundant units are necessary
@@ -32,5 +28,5 @@ this backup can easily be restored on a new system
 these systems will then form an F2F network using GNUnet, through which they will be synced to each other
 
 the ultimate goal is to use Ushell as the user interface of UPM Linux
-but before that, you can try it on Arch Linux; just boot into an Arch Linux live image and run this:
+but before that, you can try it on Arch Linux; just boot into an Arch Linux live image, and run this:
 ; sh archinstall.sh
