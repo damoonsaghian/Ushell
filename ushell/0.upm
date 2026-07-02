@@ -24,7 +24,6 @@ esac
 chmod 755 /etc/NetworkManager/dispatcher.d/09-tz-guess
 
 # to prevent BadUSB, cerate evdev rule that when a new input device is connected:
-# disables the device
 # runs lock
 # https://manned.org/man/udev
 # https://www.reactivated.net/writing_udev_rules.html

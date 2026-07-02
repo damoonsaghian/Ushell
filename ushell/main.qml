@@ -24,9 +24,6 @@
 // apps will open in separate desktops
 // extra windows will be floating with border shadow, and will be closed when unfocused
 
-// to prevent BadUSB:
-// only accept commands from microphones connected through bluetooth (not usb)
-
 /*
 lock
 on statusbar replace apps with a lock icon, that shows the password prompt when clicked on
