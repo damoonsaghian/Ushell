@@ -23,7 +23,7 @@ esac
 ' > /etc/NetworkManager/dispatcher.d/09-tz-guess
 chmod 755 /etc/NetworkManager/dispatcher.d/09-tz-guess
 
-# to prevent BadUSB, cerate evdev rule that when a new input device is connected:
-# runs lock
+# to prevent BadUSB, write udev rules that when a bluetooth keyboard is connected,
+# blocks usb (excluding btusb) input devices (keyboard, mouse, michrophone),
 # https://manned.org/man/udev
 # https://www.reactivated.net/writing_udev_rules.html

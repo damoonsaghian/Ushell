@@ -24,7 +24,7 @@ start_cli() {
 	# , copy projects
 	# , terminal: ask user for lockscreen password, and exit if wrong
 	
-	bash --noprofile --norc -i "$script_dir"/bashrc.sh
+	$SHELL
 }
 
 if [ "$(tty)" = "/dev/tty1" ] && [ "$(id -u)" != 0 ]; then
