@@ -1,7 +1,11 @@
-# deps: bash quickshell
+# deps: bash qt6wayland quickshell mauikit-terminal
 
 # https://git.outfoxxed.me/quickshell/quickshell
 # https://git.outfoxxed.me/quickshell/quickshell/src/branch/master/BUILD.md
+
+# https://github.com/JUMO-GmbH-Co-KG/embedded-compositor
+# https://github.com/mangowm/mango
+# https://github.com/nikoloc/mwc
 
 echo -n '#!/usr/bin/env sh
 if [ "$1" = priv ]; then

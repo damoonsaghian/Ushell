@@ -39,7 +39,7 @@ selection-foreground=dddddd
 */
 
 /*
-using "sudo" in CodevShell does not suffer from these flaws:
+using "sudo" in Ushell does not suffer from these flaws:
 https://www.reddit.com/r/linuxquestions/comments/8mlil7/whats_the_point_of_the_sudo_password_prompt_if/
 https://security.stackexchange.com/questions/119410/why-should-one-use-sudo
 because:
