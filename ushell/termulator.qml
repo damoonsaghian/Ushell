@@ -6,8 +6,6 @@ terminal views are placed in a vertical stack, with the unfocused views, shrinke
 to navigate between terminal views, use "ctrl+pageup" and "ctrl+pagedown" keys
 to open a new terminal emulator view, press "ctrl+n"
 
-term box has a maximum hight which is the reported height, but the visible height adjusts to text
-
 scroll up: Page_Up
 scroll down: Page_Down
 copy: Control+c
@@ -45,11 +43,11 @@ https://security.stackexchange.com/questions/119410/why-should-one-use-sudo
 because:
 , when a user enters "sudo" in command line, it will run /usr/bin/sudo
 	this can't be manipulated by normal user
-, reaching to terminal in CodevShell: app launcher -> space
+, reaching to terminal in UShell: app launcher -> system -> terminal
 	this can't be manipulated by normal user
-, CodevShell only allows keyboard input from real keyboard, or from its built'in on'screen keyboard
-, though CodevShell has access to input and video devices,
+, Ushell only allows keyboard input from real keyboard, or from its built'in on'screen keyboard
+, though Ushell has access to input and video devices,
 	that privilage will be dropped (using "sudo -u "$USER" ...") for all launched apps and commands
-, there is no way for normal user to replace CodevShell
+, there is no way for normal user to replace Ushell
 so a malicious program can't steal root password (eg by faking password entry)
 */

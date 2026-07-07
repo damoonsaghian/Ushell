@@ -28,7 +28,7 @@ start_cli() {
 }
 
 if [ "$(tty)" = "/dev/tty1" ] && [ "$(id -u)" != 0 ]; then
-	qs "$script_dir"/main.qml || start_cli
+	qml "$script_dir"/gshell.qml || start_cli
 else
 	start_cli
 fi

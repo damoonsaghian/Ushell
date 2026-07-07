@@ -5,6 +5,8 @@
 // shows it in a list for the user to choose, feeds the answer to stdin of the executed command
 // this ends when the command terminates (ie when EOF is send to stdout of the command)
 
+// second item is termulator
+
 // in "system" if the entered text contains spaces run it in a terminal emulator view
 
 // an item for screenshot and screencast
