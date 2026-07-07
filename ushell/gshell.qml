@@ -10,7 +10,6 @@ WaylandCompositor {
 	WlShell {}
 }
 
-
 // https://quickshell.org/about/
 // https://git.outfoxxed.me/quickshell/quickshell-examples
 // https://github.com/caelestia-dots/shell
