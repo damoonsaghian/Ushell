@@ -1,23 +1,7 @@
-# deps: bash qt6wayland quickshell mauikit-terminal
-
-# https://git.outfoxxed.me/quickshell/quickshell
-# https://git.outfoxxed.me/quickshell/quickshell/src/branch/master/BUILD.md
-
-# https://github.com/JUMO-GmbH-Co-KG/embedded-compositor
-# https://github.com/mangowm/mango
-# https://github.com/nikoloc/mwc
-
-echo -n '#!/usr/bin/env sh
-if [ "$1" = priv ]; then
-	. "$(dirname "$(readlink -f "$0")")"/../../1.sh
-else
-	doas setpriv --reuid=nu --regid=nu --groups=input,video,audio /usr/bin/ushell priv
-fi
-' > exp/cmd/ushell
+# deps: bash qt6wayland mauikit-terminal
 
 cat <<-EOF > /etc/doas.d/ushell.conf
-permit nopass nu cmd setpriv --reuid=nu --regid=nu --groups=input,video,audio /usr/bin/ushell priv
-permit nopass nu cmd /usr/bin/passwd nu
+permit nu cmd /usr/bin/passwd nu
 EOF
 
 echo '#!/bin/sh
