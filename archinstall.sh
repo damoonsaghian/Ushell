@@ -59,6 +59,7 @@ pacstrap -K /mnt base $ucode memtest86+-efi linux linux-firmware linux-firmware-
 	fwupd btrfs-progs dosfstools opendoas nano bash-completion man-db \
 	chrony networkmanager bluez bluez-obex pipewire-audio pipewire-pulse wireplumber \
 	adobe-source-code-pro-fonts noto-fonts-emoji noto-fonts noto-fonts-cjk \
+	clang qt6-wayland \
 	strike fiery index-fm maui-station maui-nota maui-pix maui-clip vvave communicator
 
 mkdir -p /mnt/boot/loader/entries
@@ -132,6 +133,8 @@ echo; echo "set lock'screen password"
 while ! arch-chroot /mnt passwd nu; do
 	echo "please retry"
 done
+echo 'permit nopass nu cmd /usr/bin/passwd nu' > /mnt/etc/doas.d/passwd.conf
+
 
 cat <<-'EOF' > /mnt/usr/local/bin/autologin
 # set resource limits for realtime applications like the rt module in pipewire
@@ -158,17 +161,12 @@ ExecStart=-/usr/bin/agetty --skip-login --nonewline --noissue --noreset --noclea
 ' > /mnt/etc/systemd/system/getty@tty2.service.d/autologin.conf
 
 script_dir="$(dirname "$(readlink -f "$0")")"
-cp -r "$script_dir"/ushell /mnt/usr/local/share/
+cp -r "$script_dir"/ushell /tmp/
 
-echo -n '#!/usr/bin/env sh
-doas setpriv --reuid=nu --regid=nu --groups=input,video,audio sh /usr/local/share/ushell/1.sh
-' > /mnt/usr/local/bin/ushell
-chmod +x /mnt/usr/local/bin/ushell
-
-cat <<-EOF > /mnt/etc/doas.d/ushell.conf
-permit nopass nu cmd setpriv --reuid=nu --regid=nu --groups=input,video,audio sh /usr/local/share/ushell/1.sh
-permit nopass nu cmd /usr/bin/passwd nu
-EOF
+arch-chroot /mnt clang /tmp/ushell/*.cpp -lQt6Core -lQt6Gui -lQt6Quick -lQt6QuickWidgets -lQt6wayland \
+	-o /tmp/ushell/ushell
+mv /tmp/ushell/ushell /mnt/usr/local/bin/
+setfacl -m g:input:rwx,g:video:rwx,g:audio:rwx /mnt/usr/local/bin/ushell
 
 echo '#!/bin/sh
 case "$2" in

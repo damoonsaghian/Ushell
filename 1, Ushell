@@ -14,7 +14,6 @@ the first item in the application launcher is "system", which opens the system m
 , timezone
 , passwords
 , packages (install, remove, update, create an installation media)
-, terminal
 , backup (create, restore)
 
 to have a really fail'safe system, redundant units are necessary
