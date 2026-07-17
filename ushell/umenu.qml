@@ -1,6 +1,9 @@
 // run apps with:
 // sudo -u "$USER" ...
 
+// apps will open in separate desktops
+// extra windows will be floating with border shadow, and will be closed when unfocused
+
 // the first item is "system" that executes "system ext-menu", read its stdout,
 // shows it in a list for the user to choose, feeds the answer to stdin of the executed command
 // this ends when the command terminates (ie when EOF is send to stdout of the command)

@@ -4,6 +4,8 @@ cat <<-EOF > /etc/doas.d/ushell.conf
 permit nu cmd /usr/bin/passwd nu
 EOF
 
+setfacl -m g:input:rwx,g:dri:rwx /usr/bin/gushell
+
 echo '#!/bin/sh
 case "$2" in
 up) doas -u nu sh /usr/local/share/ushell/system.sh tz guess ;;
