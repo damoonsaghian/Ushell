@@ -162,11 +162,12 @@ ExecStart=-/usr/bin/agetty --skip-login --nonewline --noissue --noreset --noclea
 
 script_dir="$(dirname "$(readlink -f "$0")")"
 cp -r "$script_dir"/ushell /tmp/
+mv /tmp/ushell/1.sh /mnt/usr/local/bin/ushell
+chmod +x /mnt/usr/local/bin/ushell
 
 qt_deps=Core,Gui,Quick,QuickControls2,QuickWidgets,WaylandCompositor
-arch-chroot /mnt clang /tmp/ushell/*.cpp -lQt6{$qt_deps} -I/usr/include/qt6/Qt{$qt_deps} -o /tmp/ushell/ushell
-mv /tmp/ushell/ushell /mnt/usr/local/bin/
-setfacl -m g:input:rwx,g:video:rwx,g:audio:rwx /mnt/usr/local/bin/ushell
+arch-chroot /mnt clang /tmp/ushell/*.cpp -lQt6{$qt_deps} -I/usr/include/qt6/Qt{$qt_deps} -o /tmp/ushell/gushell
+mv /tmp/ushell/gushell /mnt/usr/local/bin/
 
 echo '#!/bin/sh
 case "$2" in
