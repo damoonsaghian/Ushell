@@ -59,7 +59,7 @@ pacstrap -K /mnt base $ucode memtest86+-efi linux linux-firmware linux-firmware-
 	fwupd btrfs-progs dosfstools opendoas nano bash-completion man-db \
 	chrony networkmanager bluez bluez-obex pipewire-audio pipewire-pulse wireplumber \
 	adobe-source-code-pro-fonts noto-fonts-emoji noto-fonts noto-fonts-cjk \
-	clang qt6-wayland \
+	clang qt6-wayland mauikit-terminal \
 	strike fiery index-fm maui-station maui-nota maui-pix maui-clip vvave communicator
 
 mkdir -p /mnt/boot/loader/entries
@@ -163,8 +163,8 @@ ExecStart=-/usr/bin/agetty --skip-login --nonewline --noissue --noreset --noclea
 script_dir="$(dirname "$(readlink -f "$0")")"
 cp -r "$script_dir"/ushell /tmp/
 
-arch-chroot /mnt clang /tmp/ushell/*.cpp -lQt6Core -lQt6Gui -lQt6Quick -lQt6QuickWidgets -lQt6wayland \
-	-o /tmp/ushell/ushell
+qt_deps=Core,Gui,Quick,QuickControls2,QuickWidgets,WaylandCompositor
+arch-chroot /mnt clang /tmp/ushell/*.cpp -lQt6{$qt_deps} -I/usr/include/qt6/Qt{$qt_deps} -o /tmp/ushell/ushell
 mv /tmp/ushell/ushell /mnt/usr/local/bin/
 setfacl -m g:input:rwx,g:video:rwx,g:audio:rwx /mnt/usr/local/bin/ushell
 

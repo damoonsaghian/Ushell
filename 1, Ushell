@@ -28,4 +28,4 @@ these systems will then form an F2F network using GNUnet, through which they wil
 
 the ultimate goal is to use Ushell as the user interface of UPM Linux
 but before that, you can try it on Arch Linux; just boot into an Arch Linux live image, and run this:
-; sh archinstall.sh
+; bash archinstall.sh
