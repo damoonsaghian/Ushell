@@ -1,11 +1,12 @@
 import std;
 using std::Vector;
 
-#incude <qt6/QtGui/QGuiApplication>
-#incude <qt6/QtQuick/QGuiApplication>
-#incude <qt6/QtWaylandCompositor/QWaylandIdleInhibitManagerV1>
-#incude <qt6/QtWaylandCompositor/QWaylandKeyboard>
-#incude <qt6/QtWaylandCompositor/QWaylandOutput>
+#incude <QQuickWindow>
+#incude <QGuiApplication>
+#incude <QWaylandIdleInhibitManagerV1>
+#incude <QWaylandKeyboard>
+#incude <QWaylandCompositor>
+#incude <QWaylandOutput>
 
 struct Shell_screen {
 	QScreen screen;
