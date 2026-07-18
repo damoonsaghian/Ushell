@@ -31,7 +31,7 @@ start_cli() {
 }
 
 if [ "$(tty)" = "/dev/tty1" ] && [ "$(id -u)" != 0 ]; then
-	uway || start_cli
+	doas setpriv --reuid=nu --regid=nu --groups=input uway || start_cli
 else
 	start_cli
 fi

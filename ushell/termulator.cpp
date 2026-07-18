@@ -37,7 +37,7 @@ selection-foreground=dddddd
 */
 
 /*
-using "sudo" in Ushell does not suffer from these flaws:
+using "sudo" in Ushell on UPM Linux does not suffer from these flaws:
 https://www.reddit.com/r/linuxquestions/comments/8mlil7/whats_the_point_of_the_sudo_password_prompt_if/
 https://security.stackexchange.com/questions/119410/why-should-one-use-sudo
 because:
@@ -46,8 +46,8 @@ because:
 , reaching to terminal in UShell: app launcher -> system -> terminal
 	this can't be manipulated by normal user
 , Ushell only allows keyboard input from real keyboard, or from its built'in on'screen keyboard
-, though Ushell has access to input and video devices,
-	that privilage will be dropped (using "sudo -u "$USER" ...") for all launched apps and commands
+, though Ushell has access to input and dri devices,
+	that privilage will be dropped (using "doas -u "$USER" ...") for all launched apps and commands
 , there is no way for normal user to replace Ushell
 so a malicious program can't steal root password (eg by faking password entry)
 */
