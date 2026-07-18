@@ -165,6 +165,7 @@ cp -r "$script_dir" /tmp/ushell
 mv /tmp/ushell/1.sh /mnt/usr/local/bin/ushell
 mv /tmp/ushell/system.sh /mnt/usr/local/bin/system
 chmod +x /mnt/usr/local/bin/{ushell,system}
+echo 'permit nopass nu cmd setpriv --reuid=nu --regid=nu --groups=input uway' > /mnt/etc/doas.d/ushell.conf
 qt_deps=Core,Gui,Quick,QuickControls2,QuickWidgets,WaylandCompositor
 arch-chroot /mnt clang /tmp/ushell/*.cpp -lQt6{$qt_deps} -I/usr/include/qt6/Qt{$qt_deps} -o /mnt/usr/local/bin/uway
 
