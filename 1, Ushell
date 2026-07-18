@@ -1,4 +1,4 @@
-Ushell is a Wayland shell, based on QuickShell ("https://quickshell.org/")
+Ushell is a Wayland shell, based on QtWayland
 
 there is an application launcher which can be toggled by pressing "super" (mod+mod) or "alt+tab"
 applications will be opened in their own workspace,	that will also contain any extra windows opened by that application
