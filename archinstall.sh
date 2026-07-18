@@ -161,13 +161,12 @@ ExecStart=-/usr/bin/agetty --skip-login --nonewline --noissue --noreset --noclea
 ' > /mnt/etc/systemd/system/getty@tty2.service.d/autologin.conf
 
 script_dir="$(dirname "$(readlink -f "$0")")"
-cp -r "$script_dir"/ushell /tmp/
+cp -r "$script_dir" /tmp/ushell
 mv /tmp/ushell/1.sh /mnt/usr/local/bin/ushell
-chmod +x /mnt/usr/local/bin/ushell
-
+mv /tmp/ushell/system.sh /mnt/usr/local/bin/system
+chmod +x /mnt/usr/local/bin/{ushell,system}
 qt_deps=Core,Gui,Quick,QuickControls2,QuickWidgets,WaylandCompositor
-arch-chroot /mnt clang /tmp/ushell/*.cpp -lQt6{$qt_deps} -I/usr/include/qt6/Qt{$qt_deps} -o /tmp/ushell/gushell
-mv /tmp/ushell/gushell /mnt/usr/local/bin/
+arch-chroot /mnt clang /tmp/ushell/*.cpp -lQt6{$qt_deps} -I/usr/include/qt6/Qt{$qt_deps} -o /mnt/usr/local/bin/uway
 
 echo '#!/bin/sh
 case "$2" in

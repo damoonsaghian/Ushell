@@ -1,0 +1,20 @@
+# deps: bash qt6wayland mauikit-terminal
+
+script_dir="$(dirname "$(readlink -f "$0")")"
+qt_deps=Core,Gui,Quick,QuickControls2,QuickWidgets,WaylandCompositor
+clang "$script_dir"/ushell/*.cpp -lQt6{$qt_deps} -I/usr/include/qt6/Qt{$qt_deps} -o "$script_dir"/.cache/upm/uway
+# test:
+"$script_dir"/.cache/upm/uway
+
+#cat <<-EOF > /etc/doas.d/ushell.conf
+#permit nu cmd /usr/bin/passwd nu
+#EOF
+
+#setfacl -m g:input:rwx,g:dri:rwx /usr/bin/uway
+
+#echo '#!/bin/sh
+#case "$2" in
+#up) doas -u nu sh /usr/local/share/ushell/system.sh tz guess ;;
+#esac
+#' > /etc/NetworkManager/dispatcher.d/09-tz-guess
+#chmod 755 /etc/NetworkManager/dispatcher.d/09-tz-guess
