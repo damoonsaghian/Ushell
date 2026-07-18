@@ -31,7 +31,7 @@ start_cli() {
 }
 
 if [ "$(tty)" = "/dev/tty1" ] && [ "$(id -u)" != 0 ]; then
-	gushell || start_cli
+	uway || start_cli
 else
 	start_cli
 fi
