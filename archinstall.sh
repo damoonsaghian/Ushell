@@ -59,7 +59,7 @@ pacstrap -K /mnt base $ucode memtest86+-efi linux linux-firmware linux-firmware-
 	fwupd btrfs-progs dosfstools opendoas nano bash-completion man-db \
 	chrony networkmanager bluez bluez-obex pipewire-audio pipewire-pulse wireplumber \
 	adobe-source-code-pro-fonts noto-fonts-emoji noto-fonts noto-fonts-cjk \
-	clang qt6-wayland mauikit-terminal \
+	clang qt6-wayland quickshell mauikit-terminal \
 	strike fiery index-fm maui-station maui-nota maui-pix maui-clip vvave communicator
 
 mkdir -p /mnt/boot/loader/entries
@@ -160,22 +160,11 @@ ExecStart=-/usr/bin/agetty --skip-login --nonewline --noissue --noreset --noclea
 ' > /mnt/etc/systemd/system/getty@tty2.service.d/autologin.conf
 
 script_dir="$(dirname "$(readlink -f "$0")")"
-cp -r "$script_dir" /mnt/usr/local/share/ushell
+cp -r "$script_dir"/ushell /mnt/usr/local/share/
 ln -s /usr/local/share/ushell/1.sh /mnt/usr/local/bin/ushell
-chmod +x /mnt/usr/local/bin/ushell
-echo 'permit nopass nu cmd setpriv --reuid=nu --regid=nu --groups=input "/usr/local/share/ushell/uway"' > \
-	/mnt/etc/doas.d/ushell.conf
-mkdir -p /tmp/ushell
-mv /mnt/usr/local/share/ushell/uway.cpp /tmp/ushell/
-qt_deps=Core,Qml,Gui
-arch-chroot /mnt clang /tmp/ushell/uway.cpp -lQt6{$qt_deps} -I/usr/include/qt6/Qt{$qt_deps} -o uway
-mv /tmp/ushell/uway /mnt/usr/local/share/ushell/
+chmod +x /usr/local/share/ushell/1.sh
 
-echo '#!/bin/sh
-case "$2" in
-up) doas -u nu sh /usr/local/share/ushell/system.sh tz guess ;;
-esac
-' > /mnt/etc/NetworkManager/dispatcher.d/09-tz-guess
+cp "$script_dir"/ushell.tz-guess.sh /mnt/etc/NetworkManager/dispatcher.d/09-tz-guess
 chmod 755 /mnt/etc/NetworkManager/dispatcher.d/09-tz-guess
 
 echo; echo "installation completed successfully"

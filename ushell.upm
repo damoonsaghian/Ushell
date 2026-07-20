@@ -1,26 +1,13 @@
-# deps: bash qt6wayland mauikit-terminal
+# deps: bash qt6wayland quickshell mauikit-terminal
 
-#cat <<-EOF > /etc/doas.d/ushell.conf
-#permit nu cmd /usr/bin/passwd nu
-#EOF
+# ushell/1.sh -> exec/ushell-priv
+echo -n '#!/usr/bin/env sh
+script_dir="$(dirname "$(readlink -f "$0")")"
+setpriv --reuid=nu --regid=nu --groups=input,dri /usr/bin/ushell-priv
+' > exec/ushell
+chmod +x exec/ushell exec/ushell-priv
+echo 'permit nopass nu cmd setpriv --reuid=nu --regid=nu --groups=input,dri /usr/bin/ushell-priv"' > \
+	/mnt/etc/doas.d/ushell.conf
 
-#setfacl -m g:input:rwx,g:dri:rwx /usr/bin/uway
-
-#echo '#!/bin/sh
-#case "$2" in
-#up) doas -u nu sh /usr/local/share/ushell/system.sh tz guess ;;
-#esac
-#' > /etc/NetworkManager/dispatcher.d/09-tz-guess
-#chmod 755 /etc/NetworkManager/dispatcher.d/09-tz-guess
-
-# test:
-[ -z "$PKG" ] && {
-	script_dir="$(dirname "$(readlink -f "$0")")"
-	mkdir -p "$script_dir"/.cache/ushell-test/
-	qt_deps=Core,Qml,Gui
-	test "$script_dir"/.cache/ushell-test/uway -ot "$script_dir"/ushell/uway.cpp &&
-	clang "$script_dir"/ushell/uway.cpp -lQt6{$qt_deps} -I/usr/include/qt6/Qt{$qt_deps} \
-		-o "$script_dir"/.cache/ushell-test/uway
-	ln -sr "$script_dir"/ushell/*.qml "$script_dir"/.cache/ushell-test/
-	"$script_dir"/.cache/ushell/uway
-}
+# make a symbolic link from ushell.tz-guess.sh to  /etc/NetworkManager/dispatcher.d/09-tz-guess
+# chmod 755 ushell.tz-guess.sh
