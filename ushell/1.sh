@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
+script_dir="$(dirname "$(readlink -f "$0")")"
+
 [ -f /etc/profile ] && . /etc/profile
 for profile_script in /usr/share/profile/*.sh; do
 	[ -f "$profile_script" ] && . "$profile_script"
@@ -26,12 +28,14 @@ start_cli() {
 	# , backup
 	# , copy projects
 	# , terminal: ask user for lockscreen password, and exit if wrong
+	# , exit
+	# , poweroff
 	
 	$SHELL
 }
 
 if [ "$(tty)" = "/dev/tty1" ] && [ "$(id -u)" != 0 ]; then
-	doas setpriv --reuid=nu --regid=nu --groups=input uway || start_cli
+	qml "$script_dir/uway.qml" || start_cli
 else
 	start_cli
 fi
