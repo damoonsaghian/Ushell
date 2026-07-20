@@ -1,11 +1,5 @@
 # deps: bash qt6wayland mauikit-terminal
 
-script_dir="$(dirname "$(readlink -f "$0")")"
-qt_deps=Core,Gui,Quick,QuickControls2,QuickWidgets,WaylandCompositor
-clang "$script_dir"/ushell/*.cpp -lQt6{$qt_deps} -I/usr/include/qt6/Qt{$qt_deps} -o "$script_dir"/.cache/upm/uway
-# test:
-"$script_dir"/.cache/upm/uway
-
 #cat <<-EOF > /etc/doas.d/ushell.conf
 #permit nu cmd /usr/bin/passwd nu
 #EOF
@@ -18,3 +12,15 @@ clang "$script_dir"/ushell/*.cpp -lQt6{$qt_deps} -I/usr/include/qt6/Qt{$qt_deps}
 #esac
 #' > /etc/NetworkManager/dispatcher.d/09-tz-guess
 #chmod 755 /etc/NetworkManager/dispatcher.d/09-tz-guess
+
+# test:
+[ -z "$PKG" ] && {
+	script_dir="$(dirname "$(readlink -f "$0")")"
+	mkdir -p "$script_dir"/.cache/ushell-test/
+	qt_deps=Core,Qml,Gui
+	test "$script_dir"/.cache/ushell-test/uway -ot "$script_dir"/ushell/uway.cpp &&
+	clang "$script_dir"/ushell/uway.cpp -lQt6{$qt_deps} -I/usr/include/qt6/Qt{$qt_deps} \
+		-o "$script_dir"/.cache/ushell-test/uway
+	ln -sr "$script_dir"/ushell/*.qml "$script_dir"/.cache/ushell-test/
+	"$script_dir"/.cache/ushell/uway
+}
