@@ -57,9 +57,9 @@ cpu_vendor_id="$(cat /proc/cpuinfo | grep vendor_id | head -n1 | sed -n "s/vendo
 
 pacstrap -K /mnt base $ucode memtest86+-efi linux linux-firmware linux-firmware-marvell sof-firmware \
 	fwupd btrfs-progs dosfstools opendoas nano bash-completion man-db \
-	chrony networkmanager bluez bluez-obex pipewire-audio pipewire-pulse wireplumber \
+	geoclue chrony networkmanager bluez bluez-obex pipewire-audio pipewire-pulse wireplumber \
 	adobe-source-code-pro-fonts noto-fonts-emoji noto-fonts noto-fonts-cjk \
-	clang qt6-wayland quickshell mauikit-terminal \
+	qt6-wayland quickshell mauikit-terminal \
 	strike fiery index-fm maui-station maui-nota maui-pix maui-clip vvave communicator
 
 mkdir -p /mnt/boot/loader/entries
