@@ -35,7 +35,7 @@ start_cli() {
 }
 
 if [ "$(tty)" = "/dev/tty1" ] && [ "$(id -u)" != 0 ]; then
-	qml "$script_dir/uway.qml" || start_cli
+	qml6 "$script_dir/2.qml" || start_cli
 else
 	start_cli
 fi
