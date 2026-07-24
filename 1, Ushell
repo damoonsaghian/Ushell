@@ -1,14 +1,15 @@
 Ushell is a Wayland shell, based on QtWayland
 
 there is an application launcher which can be toggled by pressing "super" (mod+mod) or "alt+tab"
-applications will be opened in their own workspace,	that will also contain any extra windows opened by that application
+applications will be opened in their own workspace (called appspace),
+	that will also contain any extra windows opened by that application
 to close the focused window, press "super+backspace" or "alt+escape"
 
 pressing "space" as the first character in the search box of the application launcher, activates super prompt
 by typing special keywords in the super prompt, you have a fast access to various small but useful things like:
 	mathematical calculations, unit conversions, date at different timezones, dictionary, encyclopedia, etc
 
-the first item in the application launcher is "system", which opens the system menu:
+pressing "enter" as the first character in the search box of the application launcher, opens system menu
 , session (lock, suspend, exit, reboot, poweroff)
 , connections
 , timezone
